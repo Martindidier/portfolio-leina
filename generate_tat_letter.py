@@ -1,0 +1,265 @@
+#!/usr/bin/env python3
+"""Génère la lettre de motivation ciblée pour TAT Productions."""
+
+from pathlib import Path
+
+from reportlab.lib import colors
+from reportlab.lib.enums import TA_LEFT
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+from reportlab.lib.units import mm
+from reportlab.pdfgen.canvas import Canvas
+from reportlab.platypus import Flowable, Paragraph, SimpleDocTemplate, Spacer
+
+
+ROOT = Path(__file__).resolve().parent
+ASSETS = ROOT / "assets"
+OUTPUT = ASSETS / "Lettre_Motivation_TAT_Productions.pdf"
+QR_PATH = ASSETS / "qrcode_portfolio.png"
+PORTFOLIO_URL = "https://martindidier.github.io/portfolio-leina/"
+
+NAVY = colors.HexColor("#102A43")
+TEAL = colors.HexColor("#2A939B")
+INK = colors.HexColor("#182531")
+MUTED = colors.HexColor("#5F6F7D")
+PAPER = colors.HexColor("#F3F6F8")
+LINE = colors.HexColor("#D7E0E7")
+
+
+class PortfolioCard(Flowable):
+    """Carte QR Code et lien cliquable vers le portfolio."""
+
+    def __init__(self, width: float):
+        super().__init__()
+        self.width = width
+        self.height = 23 * mm
+
+    def draw(self) -> None:
+        pdf = self.canv
+        pdf.saveState()
+        pdf.setFillColor(PAPER)
+        pdf.setStrokeColor(TEAL)
+        pdf.setLineWidth(0.8)
+        pdf.roundRect(0, 0, self.width, self.height, 3 * mm, stroke=1, fill=1)
+        pdf.setFillColor(TEAL)
+        pdf.rect(0, 0, 4 * mm, self.height, stroke=0, fill=1)
+
+        qr_size = 17 * mm
+        qr_x = 8 * mm
+        qr_y = (self.height - qr_size) / 2
+        pdf.drawImage(
+            str(QR_PATH),
+            qr_x,
+            qr_y,
+            qr_size,
+            qr_size,
+            preserveAspectRatio=True,
+            mask="auto",
+        )
+
+        text_x = 30 * mm
+        pdf.setFillColor(MUTED)
+        pdf.setFont("Helvetica-Bold", 7.3)
+        pdf.drawString(text_x, self.height - 7.5 * mm, "PORTFOLIO - GRAPHISME & PAO")
+
+        label = "Voir le Portfolio en ligne"
+        label_y = self.height - 14.2 * mm
+        pdf.setFillColor(NAVY)
+        pdf.setFont("Helvetica-Bold", 10.8)
+        pdf.drawString(text_x, label_y, label)
+
+        # Flèche nord-est vectorielle : rendu fiable dans toutes les visionneuses PDF.
+        arrow_x = text_x + pdf.stringWidth(label, "Helvetica-Bold", 10.8) + 3 * mm
+        arrow_y = label_y + 1.4 * mm
+        pdf.setLineWidth(1.4)
+        pdf.line(arrow_x, arrow_y, arrow_x + 3.2 * mm, arrow_y + 3.2 * mm)
+        pdf.line(arrow_x + 1.2 * mm, arrow_y + 3.2 * mm, arrow_x + 3.2 * mm, arrow_y + 3.2 * mm)
+        pdf.line(arrow_x + 3.2 * mm, arrow_y + 1.2 * mm, arrow_x + 3.2 * mm, arrow_y + 3.2 * mm)
+
+        pdf.setFillColor(MUTED)
+        pdf.setFont("Helvetica", 7)
+        pdf.drawRightString(
+            self.width - 7 * mm,
+            self.height / 2 - 1 * mm,
+            "Scannez ou cliquez pour découvrir mes projets.",
+        )
+
+        pdf.linkURL(
+            PORTFOLIO_URL,
+            (qr_x, qr_y, qr_x + qr_size, qr_y + qr_size),
+            relative=1,
+            thickness=0,
+        )
+        pdf.linkURL(
+            PORTFOLIO_URL,
+            (text_x, label_y - 2 * mm, arrow_x + 5 * mm, label_y + 5 * mm),
+            relative=1,
+            thickness=0,
+        )
+        pdf.restoreState()
+
+
+def draw_page(canvas: Canvas, document: SimpleDocTemplate) -> None:
+    width, height = A4
+    canvas.saveState()
+    canvas.setFillColor(NAVY)
+    canvas.rect(0, height - 9 * mm, width, 9 * mm, stroke=0, fill=1)
+    canvas.setFillColor(TEAL)
+    canvas.rect(0, height - 10.5 * mm, width, 1.5 * mm, stroke=0, fill=1)
+    canvas.setStrokeColor(LINE)
+    canvas.setLineWidth(0.5)
+    canvas.line(22 * mm, 15 * mm, width - 22 * mm, 15 * mm)
+    canvas.setFillColor(MUTED)
+    canvas.setFont("Helvetica", 7.5)
+    canvas.drawString(22 * mm, 10.5 * mm, "LEÏNA MARTIN - CANDIDATURE TAT PRODUCTIONS")
+    canvas.drawRightString(width - 22 * mm, 10.5 * mm, "STAGES 2027")
+    canvas.restoreState()
+
+
+def build_letter() -> None:
+    if not QR_PATH.is_file():
+        raise FileNotFoundError(f"QR Code introuvable : {QR_PATH}")
+
+    document = SimpleDocTemplate(
+        str(OUTPUT),
+        pagesize=A4,
+        rightMargin=22 * mm,
+        leftMargin=22 * mm,
+        topMargin=18 * mm,
+        bottomMargin=20 * mm,
+        title="Lettre de motivation - TAT Productions - Leïna Martin",
+        author="Leïna Martin",
+        subject="Candidature pour deux périodes de stage en 2027",
+    )
+    styles = getSampleStyleSheet()
+    identity = ParagraphStyle(
+        "Identity",
+        parent=styles["Normal"],
+        fontName="Helvetica-Bold",
+        fontSize=14.5,
+        leading=17,
+        textColor=NAVY,
+        spaceAfter=1,
+    )
+    contact = ParagraphStyle(
+        "Contact",
+        parent=styles["Normal"],
+        fontName="Helvetica",
+        fontSize=8.6,
+        leading=11,
+        textColor=MUTED,
+    )
+    recipient = ParagraphStyle(
+        "Recipient",
+        parent=styles["Normal"],
+        fontName="Helvetica",
+        fontSize=8.9,
+        leading=11.5,
+        textColor=INK,
+        leftIndent=76 * mm,
+        spaceBefore=5 * mm,
+        spaceAfter=4 * mm,
+    )
+    subject = ParagraphStyle(
+        "Subject",
+        parent=styles["Normal"],
+        fontName="Helvetica-Bold",
+        fontSize=9.25,
+        leading=11.5,
+        textColor=NAVY,
+        spaceAfter=3.8 * mm,
+    )
+    body = ParagraphStyle(
+        "Body",
+        parent=styles["Normal"],
+        fontName="Helvetica",
+        fontSize=8.75,
+        leading=11.45,
+        textColor=INK,
+        alignment=TA_LEFT,
+        spaceAfter=2.35 * mm,
+    )
+    recommendation = ParagraphStyle(
+        "Recommendation",
+        parent=body,
+        fontName="Helvetica-Bold",
+        textColor=NAVY,
+        leftIndent=4 * mm,
+        borderColor=TEAL,
+        borderWidth=0,
+        borderPadding=(0, 0, 0, 3 * mm),
+        spaceAfter=2.8 * mm,
+    )
+    bullets = ParagraphStyle(
+        "Bullets",
+        parent=body,
+        leftIndent=5 * mm,
+        firstLineIndent=-3.5 * mm,
+        spaceAfter=0.7 * mm,
+    )
+    signature = ParagraphStyle(
+        "Signature",
+        parent=body,
+        fontName="Helvetica-Bold",
+        textColor=NAVY,
+        spaceBefore=0.5 * mm,
+        spaceAfter=0,
+    )
+
+    story = [
+        Paragraph("Leïna Martin", identity),
+        Paragraph("07 44 73 29 81 | leina.m31410@gmail.com", contact),
+        Paragraph("Élève en 1ère Bac Pro RPIP - Lycée Stéphane Hessel, Toulouse", contact),
+        Paragraph(
+            "TAT Productions<br/><b>Service Recrutement / Stages</b><br/>Toulouse",
+            recipient,
+        ),
+        Paragraph(
+            "Objet : Candidature - Stages 2027 en graphisme, PAO et chaîne graphique",
+            subject,
+        ),
+        Paragraph("Madame, Monsieur,", body),
+        Paragraph(
+            "Sur les conseils de M. Damien Martin, membre de votre studio, je vous adresse ma candidature et me tiens à votre entière disposition pour un entretien.",
+            recommendation,
+        ),
+        Paragraph(
+            "Actuellement élève en Première Bac Pro RPIP (Réalisation de Produits Imprimés et Plurimédia), option Graphisme, au lycée Stéphane Hessel de Toulouse, je souhaite effectuer un stage pratique au sein de TAT Productions.",
+            body,
+        ),
+        Paragraph(
+            "Dans le cadre de mon cursus, je dois valider l'une des deux périodes de formation en entreprise suivantes :",
+            body,
+        ),
+        Paragraph("- Du 11 janvier au 5 février 2027 (4 semaines)", bullets),
+        Paragraph("- Du 7 juin au 2 juillet 2027 (4 semaines)", bullets),
+        Spacer(1, 0.8 * mm),
+        Paragraph(
+            "Je suis particulièrement intéressée par l'univers de TAT Productions et par la manière dont vos équipes associent animation 3D, graphisme et construction d'univers visuels cohérents. Découvrir cet environnement me permettrait de mieux comprendre les étapes d'une production et la collaboration entre les métiers créatifs.",
+            body,
+        ),
+        Paragraph(
+            "Ma formation m'a permis de développer des compétences en PAO avec Adobe Illustrator, Adobe InDesign et Adobe Photoshop : création vectorielle, mise en page éditoriale, retouche d'image et préparation de fichiers pour l'impression. J'ai notamment réalisé le projet « Boîte de chocolat », comprenant une identité visuelle, un gabarit de packaging et sa préparation technique.",
+            body,
+        ),
+        Paragraph(
+            "Sérieuse, appliquée et dynamique, je serais ravie de mettre ces acquis au service de votre équipe, d'observer vos méthodes de travail et de participer aux missions qui pourraient m'être confiées.",
+            body,
+        ),
+        Paragraph(
+            "Hébergée à l'internat à Toulouse pendant mes semaines de cours et de stage, je bénéficie d'une autonomie totale sur l'agglomération toulousaine et d'une pleine disponibilité au quotidien.",
+            body,
+        ),
+        Paragraph(
+            "Je vous prie d'agréer, Madame, Monsieur, l'expression de mes salutations distinguées.",
+            body,
+        ),
+        Paragraph("Leïna Martin", signature),
+        Spacer(1, 3.5 * mm),
+        PortfolioCard(document.width),
+    ]
+    document.build(story, onFirstPage=draw_page, onLaterPages=draw_page)
+
+
+if __name__ == "__main__":
+    build_letter()
