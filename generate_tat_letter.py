@@ -32,14 +32,14 @@ class PortfolioCard(Flowable):
     def __init__(self, width: float):
         super().__init__()
         self.width = width
-        self.height = 18 * mm
+        self.height = 25 * mm
 
     def draw(self) -> None:
         pdf = self.canv
         pdf.saveState()
-        qr_size = 17 * mm
-        qr_x = 0
-        qr_y = (self.height - qr_size) / 2
+        qr_size = 16 * mm
+        qr_x = (self.width - qr_size) / 2
+        qr_y = 7 * mm
         pdf.drawImage(
             str(QR_PATH),
             qr_x,
@@ -50,20 +50,11 @@ class PortfolioCard(Flowable):
             mask="auto",
         )
 
-        text_x = 23 * mm
         label = "Voir le Portfolio en ligne"
-        label_y = self.height / 2 - 1.8 * mm
+        label_y = 1.5 * mm
         pdf.setFillColor(NAVY)
-        pdf.setFont("Helvetica-Bold", 10.8)
-        pdf.drawString(text_x, label_y, label)
-
-        # Flèche nord-est vectorielle : rendu fiable dans toutes les visionneuses PDF.
-        arrow_x = text_x + pdf.stringWidth(label, "Helvetica-Bold", 10.8) + 3 * mm
-        arrow_y = label_y + 1.4 * mm
-        pdf.setLineWidth(1.4)
-        pdf.line(arrow_x, arrow_y, arrow_x + 3.2 * mm, arrow_y + 3.2 * mm)
-        pdf.line(arrow_x + 1.2 * mm, arrow_y + 3.2 * mm, arrow_x + 3.2 * mm, arrow_y + 3.2 * mm)
-        pdf.line(arrow_x + 3.2 * mm, arrow_y + 1.2 * mm, arrow_x + 3.2 * mm, arrow_y + 3.2 * mm)
+        pdf.setFont("Helvetica-Bold", 9.2)
+        pdf.drawCentredString(self.width / 2, label_y, label)
 
         pdf.linkURL(
             PORTFOLIO_URL,
@@ -73,7 +64,12 @@ class PortfolioCard(Flowable):
         )
         pdf.linkURL(
             PORTFOLIO_URL,
-            (text_x, label_y - 2 * mm, arrow_x + 5 * mm, label_y + 5 * mm),
+            (
+                self.width / 2 - 35 * mm,
+                label_y - 1.5 * mm,
+                self.width / 2 + 35 * mm,
+                label_y + 4 * mm,
+            ),
             relative=1,
             thickness=0,
         )

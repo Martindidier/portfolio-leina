@@ -73,10 +73,11 @@ def draw_section_title(pdf, title, x, y, width, *, light=False):
 def draw_portfolio_block(pdf, x, top_y, width):
     top_y = draw_section_title(pdf, "Portfolio web", x, top_y, width, light=True)
     qr_size = 20 * mm
+    qr_x = x + (width - qr_size) / 2
     qr_y = top_y - qr_size
     pdf.drawImage(
         str(QR_PATH),
-        x,
+        qr_x,
         qr_y,
         qr_size,
         qr_size,
@@ -84,35 +85,24 @@ def draw_portfolio_block(pdf, x, top_y, width):
         mask="auto",
     )
 
-    label_x = x + qr_size + 4 * mm
-    label_y = top_y - 7 * mm
+    label_y = qr_y - 5 * mm
     pdf.setFillColor(WHITE)
-    pdf.setFont("Helvetica-Bold", 8.1)
-    pdf.drawString(label_x, label_y, "Voir le Portfolio")
-    pdf.drawString(label_x, label_y - 5 * mm, "en ligne")
-
-    # Flèche nord-est vectorielle, indépendante des polices installées.
-    arrow_x = label_x + 24 * mm
-    arrow_y = label_y - 4 * mm
-    pdf.setStrokeColor(TEAL_LIGHT)
-    pdf.setLineWidth(1.2)
-    pdf.line(arrow_x, arrow_y, arrow_x + 2.8 * mm, arrow_y + 2.8 * mm)
-    pdf.line(arrow_x + 1 * mm, arrow_y + 2.8 * mm, arrow_x + 2.8 * mm, arrow_y + 2.8 * mm)
-    pdf.line(arrow_x + 2.8 * mm, arrow_y + 1 * mm, arrow_x + 2.8 * mm, arrow_y + 2.8 * mm)
+    pdf.setFont("Helvetica-Bold", 7.8)
+    pdf.drawCentredString(x + width / 2, label_y, "Voir le Portfolio en ligne")
 
     pdf.linkURL(
         PORTFOLIO_URL,
-        (x, qr_y, x + qr_size, qr_y + qr_size),
+        (qr_x, qr_y, qr_x + qr_size, qr_y + qr_size),
         relative=0,
         thickness=0,
     )
     pdf.linkURL(
         PORTFOLIO_URL,
-        (label_x, label_y - 7 * mm, x + width, label_y + 3 * mm),
+        (x, label_y - 2 * mm, x + width, label_y + 3 * mm),
         relative=0,
         thickness=0,
     )
-    return qr_y - 8 * mm
+    return label_y - 8 * mm
 
 
 def build_cv() -> None:
