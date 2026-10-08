@@ -209,45 +209,45 @@ def build_letter() -> None:
     story = [
         Paragraph("Leïna Martin", identity),
         Paragraph("07 44 73 29 81 | leina.m31410@gmail.com", contact),
-        Paragraph("Élève en 1ère Bac Pro RPIP - Lycée Stéphane Hessel, Toulouse", contact),
+        Paragraph("Élève en 1ère Bac Pro RPIP – Lycée Stéphane Hessel", contact),
         Paragraph(
-            "TAT Productions<br/><b>Service Recrutement / Stages</b><br/>Toulouse",
+            "À l'attention du Service Recrutement / Communication<br/><b>TAT Productions — Toulouse</b>",
             recipient,
         ),
         Paragraph(
-            "Objet : Candidature - Stages 2027 en graphisme, PAO et chaîne graphique",
+            "Objet : Candidature – Stage en graphisme / PAO (Janvier-Février 2027 ou Juin-Juillet 2027)",
             subject,
         ),
         Paragraph("Madame, Monsieur,", body),
         Paragraph(
-            "Sur les conseils de M. Damien Martin, membre de votre studio, je vous adresse ma candidature et me tiens à votre entière disposition pour un entretien.",
-            recommendation,
-        ),
-        Paragraph(
-            "Actuellement élève en Première Bac Pro RPIP (Réalisation de Produits Imprimés et Plurimédia), option Graphisme, au lycée Stéphane Hessel de Toulouse, je souhaite effectuer un stage pratique au sein de TAT Productions.",
+            "Actuellement élève en Première Bac Pro RPIP (Réalisation de Produits Imprimés et Plurimédia) option Graphisme au lycée Stéphane Hessel de Toulouse, c'est avec un grand enthousiasme que je sollicite un stage au sein de votre service communication.",
             body,
         ),
         Paragraph(
-            "Dans le cadre de mon cursus, je dois valider l'une des deux périodes de formation en entreprise suivantes :",
+            "Dans le cadre de ma formation, je dois effectuer deux périodes de stage en entreprise :",
             body,
         ),
         Paragraph("- Du 11 janvier au 5 février 2027 (4 semaines)", bullets),
         Paragraph("- Du 7 juin au 2 juillet 2027 (4 semaines)", bullets),
         Spacer(1, 0.8 * mm),
         Paragraph(
-            "Je suis particulièrement intéressée par l'univers de TAT Productions et par la manière dont vos équipes associent animation 3D, graphisme et construction d'univers visuels cohérents. Découvrir cet environnement me permettrait de mieux comprendre les étapes d'une production et la collaboration entre les métiers créatifs.",
+            "Je souhaite poser ma candidature pour la première session de janvier, mais je reste pleinement disponible pour la session de juin si le planning de votre studio s'y prête davantage.",
             body,
         ),
         Paragraph(
-            "Ma formation m'a permis de développer des compétences en PAO avec Adobe Illustrator, Adobe InDesign et Adobe Photoshop : création vectorielle, mise en page éditoriale, retouche d'image et préparation de fichiers pour l'impression. J'ai notamment réalisé le projet « Boîte de chocolat », comprenant une identité visuelle, un gabarit de packaging et sa préparation technique.",
+            "Après un premier parcours au lycée en communication visuelle plurimédia, j'ai choisi de m'orienter vers la filière RPIP pour me spécialiser dans le travail sur informatique et la chaîne graphique (logiciels PAO, traitement d'image, préparation des fichiers pour impression). Passionnée par l'univers visuel de TAT Productions, je serais ravie de mettre ma sensibilité créative et mes compétences au service de vos projets.",
             body,
         ),
         Paragraph(
-            "Sérieuse, appliquée et dynamique, je serais ravie de mettre ces acquis au service de votre équipe, d'observer vos méthodes de travail et de participer aux missions qui pourraient m'être confiées.",
+            "Vous trouverez ci-joint mon portfolio présentant deux travaux réalisés sur Illustrator et InDesign (un packaging et une mise en page éditoriale).",
             body,
         ),
         Paragraph(
-            "Hébergée à l'internat à Toulouse pendant mes semaines de cours et de stage, je bénéficie d'une autonomie totale sur l'agglomération toulousaine et d'une pleine disponibilité au quotidien.",
+            "Internée à Toulouse durant mes semaines de cours et de stage, je bénéficie d'une totale autonomie et disponibilité logistique au quotidien.",
+            body,
+        ),
+        Paragraph(
+            "Sur les conseils de M. Damien Martin, membre de votre studio, je vous adresse ma candidature et me tiens à votre entière disposition pour un entretien.",
             body,
         ),
         Paragraph(
