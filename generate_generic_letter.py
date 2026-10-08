@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Génère la lettre de motivation ciblée pour TAT Productions."""
+"""Génère la lettre de motivation générique de Leïna Martin."""
 
 from pathlib import Path
 
@@ -14,7 +14,7 @@ from reportlab.platypus import Flowable, Paragraph, SimpleDocTemplate, Spacer
 
 ROOT = Path(__file__).resolve().parent
 ASSETS = ROOT / "assets"
-OUTPUT = ASSETS / "Lettre_Motivation_TAT_Productions.pdf"
+OUTPUT = ASSETS / "Lettre_Motivation_Leina_Martin.pdf"
 QR_PATH = ASSETS / "qrcode_portfolio.png"
 PORTFOLIO_URL = "https://martindidier.github.io/portfolio-leina/"
 
@@ -22,12 +22,11 @@ NAVY = colors.HexColor("#102A43")
 TEAL = colors.HexColor("#2A939B")
 INK = colors.HexColor("#182531")
 MUTED = colors.HexColor("#5F6F7D")
-PAPER = colors.HexColor("#F3F6F8")
 LINE = colors.HexColor("#D7E0E7")
 
 
-class PortfolioCard(Flowable):
-    """QR Code et lien cliquable, sans encadré décoratif."""
+class PortfolioFooter(Flowable):
+    """QR Code et lien cliquable, posés directement sans conteneur."""
 
     def __init__(self, width: float):
         super().__init__()
@@ -51,15 +50,15 @@ class PortfolioCard(Flowable):
         )
 
         text_x = 23 * mm
-        label = "Voir le Portfolio en ligne"
         label_y = self.height / 2 - 1.8 * mm
+        label = "Voir le Portfolio en ligne"
         pdf.setFillColor(NAVY)
         pdf.setFont("Helvetica-Bold", 10.8)
         pdf.drawString(text_x, label_y, label)
 
-        # Flèche nord-est vectorielle : rendu fiable dans toutes les visionneuses PDF.
         arrow_x = text_x + pdf.stringWidth(label, "Helvetica-Bold", 10.8) + 3 * mm
         arrow_y = label_y + 1.4 * mm
+        pdf.setStrokeColor(TEAL)
         pdf.setLineWidth(1.4)
         pdf.line(arrow_x, arrow_y, arrow_x + 3.2 * mm, arrow_y + 3.2 * mm)
         pdf.line(arrow_x + 1.2 * mm, arrow_y + 3.2 * mm, arrow_x + 3.2 * mm, arrow_y + 3.2 * mm)
@@ -92,8 +91,8 @@ def draw_page(canvas: Canvas, document: SimpleDocTemplate) -> None:
     canvas.line(22 * mm, 15 * mm, width - 22 * mm, 15 * mm)
     canvas.setFillColor(MUTED)
     canvas.setFont("Helvetica", 7.5)
-    canvas.drawString(22 * mm, 10.5 * mm, "LEÏNA MARTIN - CANDIDATURE TAT PRODUCTIONS")
-    canvas.drawRightString(width - 22 * mm, 10.5 * mm, "STAGES 2027")
+    canvas.drawString(22 * mm, 10.5 * mm, "LEÏNA MARTIN - CANDIDATURE DE STAGE")
+    canvas.drawRightString(width - 22 * mm, 10.5 * mm, "2027")
     canvas.restoreState()
 
 
@@ -106,69 +105,58 @@ def build_letter() -> None:
         pagesize=A4,
         rightMargin=22 * mm,
         leftMargin=22 * mm,
-        topMargin=18 * mm,
+        topMargin=19 * mm,
         bottomMargin=20 * mm,
-        title="Lettre de motivation - TAT Productions - Leïna Martin",
+        title="Lettre de motivation - Leïna Martin",
         author="Leïna Martin",
-        subject="Candidature pour deux périodes de stage en 2027",
+        subject="Candidature pour un stage en graphisme, PAO et chaîne graphique",
     )
     styles = getSampleStyleSheet()
     identity = ParagraphStyle(
         "Identity",
         parent=styles["Normal"],
         fontName="Helvetica-Bold",
-        fontSize=14.5,
-        leading=17,
+        fontSize=15,
+        leading=18,
         textColor=NAVY,
-        spaceAfter=1,
+        spaceAfter=2,
     )
     contact = ParagraphStyle(
         "Contact",
         parent=styles["Normal"],
         fontName="Helvetica",
-        fontSize=8.6,
-        leading=11,
+        fontSize=8.8,
+        leading=11.4,
         textColor=MUTED,
     )
     recipient = ParagraphStyle(
         "Recipient",
         parent=styles["Normal"],
         fontName="Helvetica",
-        fontSize=8.9,
-        leading=11.5,
+        fontSize=9.2,
+        leading=12,
         textColor=INK,
-        leftIndent=76 * mm,
-        spaceBefore=5 * mm,
-        spaceAfter=4 * mm,
+        leftIndent=78 * mm,
+        spaceBefore=7 * mm,
+        spaceAfter=6 * mm,
     )
     subject = ParagraphStyle(
         "Subject",
         parent=styles["Normal"],
         fontName="Helvetica-Bold",
-        fontSize=9.25,
-        leading=11.5,
+        fontSize=9.5,
+        leading=12,
         textColor=NAVY,
-        spaceAfter=3.8 * mm,
+        spaceAfter=5 * mm,
     )
     body = ParagraphStyle(
         "Body",
         parent=styles["Normal"],
         fontName="Helvetica",
-        fontSize=8.75,
-        leading=11.45,
+        fontSize=9.05,
+        leading=12.05,
         textColor=INK,
         alignment=TA_LEFT,
-        spaceAfter=2.35 * mm,
-    )
-    recommendation = ParagraphStyle(
-        "Recommendation",
-        parent=body,
-        fontName="Helvetica-Bold",
-        textColor=NAVY,
-        leftIndent=4 * mm,
-        borderColor=TEAL,
-        borderWidth=0,
-        borderPadding=(0, 0, 0, 3 * mm),
         spaceAfter=2.8 * mm,
     )
     bullets = ParagraphStyle(
@@ -176,7 +164,7 @@ def build_letter() -> None:
         parent=body,
         leftIndent=5 * mm,
         firstLineIndent=-3.5 * mm,
-        spaceAfter=0.7 * mm,
+        spaceAfter=0.8 * mm,
     )
     signature = ParagraphStyle(
         "Signature",
@@ -190,45 +178,39 @@ def build_letter() -> None:
     story = [
         Paragraph("Leïna Martin", identity),
         Paragraph("07 44 73 29 81 | leina.m31410@gmail.com", contact),
-        Paragraph("Élève en 1ère Bac Pro RPIP – Lycée Stéphane Hessel", contact),
-        Paragraph(
-            "À l'attention du Service Recrutement / Communication<br/><b>TAT Productions — Toulouse</b>",
-            recipient,
-        ),
-        Paragraph(
-            "Objet : Candidature – Stage en graphisme / PAO (Janvier-Février 2027 ou Juin-Juillet 2027)",
-            subject,
-        ),
+        Paragraph("Élève en 1ère Bac Pro RPIP - Lycée Stéphane Hessel", contact),
+        Paragraph("À l'attention du Responsable du recrutement / Direction", recipient),
+        Paragraph("Objet : Candidature - Stage en graphisme, PAO et chaîne graphique", subject),
         Paragraph("Madame, Monsieur,", body),
         Paragraph(
-            "Actuellement élève en Première Bac Pro RPIP (Réalisation de Produits Imprimés et Plurimédia) option Graphisme au lycée Stéphane Hessel de Toulouse, c'est avec un grand enthousiasme que je sollicite un stage au sein de votre service communication.",
+            "Actuellement élève en Première Bac Pro RPIP (Réalisation de Produits Imprimés et Plurimédia) option Graphisme au lycée Stéphane Hessel de Toulouse, je suis à la recherche d'un stage pratique au sein d'une structure professionnelle pour développer mes compétences sur le terrain.",
             body,
         ),
         Paragraph(
-            "Dans le cadre de ma formation, je dois effectuer deux périodes de stage en entreprise :",
+            "Dans le cadre de mon cursus, je dois valider deux périodes de stage en entreprise :",
             body,
         ),
         Paragraph("- Du 11 janvier au 5 février 2027 (4 semaines)", bullets),
         Paragraph("- Du 7 juin au 2 juillet 2027 (4 semaines)", bullets),
-        Spacer(1, 0.8 * mm),
+        Spacer(1, 1 * mm),
         Paragraph(
-            "Je souhaite poser ma candidature pour la première session de janvier, mais je reste pleinement disponible pour la session de juin si le planning de votre studio s'y prête davantage.",
+            "Je souhaite poser ma candidature pour l'une ou l'autre de ces périodes, selon vos disponibilités et votre charge de travail.",
             body,
         ),
         Paragraph(
-            "Après un premier parcours au lycée en communication visuelle plurimédia, j'ai choisi de m'orienter vers la filière RPIP pour me spécialiser dans le travail sur informatique et la chaîne graphique (logiciels PAO, traitement d'image, préparation des fichiers pour impression). Passionnée par l'univers visuel de TAT Productions, je serais ravie de mettre ma sensibilité créative et mes compétences au service de vos projets.",
+            "Issue d'un premier parcours en communication visuelle plurimédia dans le même établissement, j'ai choisi la filière RPIP pour me spécialiser dans le travail sur informatique et la maîtrise de la chaîne graphique (logiciels de PAO, mise en page, création vectorielle et préparation de fichiers pour l'impression).",
             body,
         ),
         Paragraph(
-            "Vous trouverez ci-joint mon portfolio présentant deux travaux réalisés sur Illustrator et InDesign (un packaging et une mise en page éditoriale).",
+            "Sérieuse, appliquée et dynamique, je serais ravie d'apporter ma contribution à votre équipe tout en découvrant vos méthodes de production. Vous trouverez ci-joint mon portfolio présentant plusieurs travaux informatiques réalisés au cours de ma formation (conception de packaging sous Illustrator et mise en page éditoriale sous InDesign).",
             body,
         ),
         Paragraph(
-            "Internée à Toulouse durant mes semaines de cours et de stage, je bénéficie d'une totale autonomie et disponibilité logistique au quotidien.",
+            "Internée à Toulouse durant mes semaines de cours et de stage, je bénéficie d'une totale autonomie logistique et d'une pleine disponibilité au quotidien.",
             body,
         ),
         Paragraph(
-            "Sur les conseils de M. Damien Martin, membre de votre studio, je vous adresse ma candidature et me tiens à votre entière disposition pour un entretien.",
+            "Je reste à votre entière disposition pour un entretien afin de vous présenter de vive voix ma motivation et mon projet professionnel.",
             body,
         ),
         Paragraph(
@@ -236,8 +218,8 @@ def build_letter() -> None:
             body,
         ),
         Paragraph("Leïna Martin", signature),
-        Spacer(1, 3.5 * mm),
-        PortfolioCard(document.width),
+        Spacer(1, 4 * mm),
+        PortfolioFooter(document.width),
     ]
     document.build(story, onFirstPage=draw_page, onLaterPages=draw_page)
 
