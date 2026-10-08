@@ -549,10 +549,14 @@ nav a:focus-visible::after {
   gap: clamp(50px, 10vw, 130px);
 }
 
-.contact-layout > div > p:last-child {
+.contact-layout > div > p:not(.eyebrow) {
   max-width: 520px;
   color: var(--muted);
   font-size: 1.05rem;
+}
+
+.contact-actions {
+  margin-top: 28px;
 }
 
 .contact-list {
