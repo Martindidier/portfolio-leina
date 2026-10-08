@@ -351,6 +351,45 @@ nav a:focus-visible::after {
   color: var(--navy-900);
 }
 
+.button-outline {
+  border-color: var(--navy-900);
+  background: transparent;
+  color: var(--navy-900);
+}
+
+.button-outline:hover {
+  background: var(--navy-900);
+  color: var(--white);
+}
+
+.button-outline-light {
+  border-color: rgba(255, 255, 255, 0.7);
+  background: transparent;
+  color: var(--white);
+}
+
+.button-outline-light:hover {
+  border-color: var(--white);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.document-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.document-actions .button {
+  min-width: 190px;
+  flex: 1 1 190px;
+  white-space: nowrap;
+}
+
+.document-actions-on-dark {
+  margin-top: 32px;
+}
+
 .stage-dates {
   display: grid;
   align-content: center;
@@ -559,6 +598,10 @@ nav a:focus-visible::after {
   margin-top: 28px;
 }
 
+.contact-actions .document-actions {
+  max-width: 480px;
+}
+
 .contact-list {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -682,6 +725,10 @@ footer {
     flex-direction: column;
   }
 
+  .portfolio-heading .document-actions {
+    width: 100%;
+  }
+
   .project-grid {
     grid-template-columns: 1fr;
   }
@@ -707,6 +754,16 @@ footer {
   .hero-actions,
   .hero-actions .button {
     width: 100%;
+  }
+
+  .document-actions,
+  .document-actions .button {
+    width: 100%;
+  }
+
+  .document-actions .button {
+    min-width: 0;
+    flex-basis: auto;
   }
 
   .section {
